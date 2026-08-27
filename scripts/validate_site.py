@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Validate the initial public GoreeCloud Suite website."""
+"""Validate the public GoreeCloud Suite website and origin-local identity assets."""
 
 from __future__ import annotations
 
+from hashlib import sha1
 from pathlib import Path
 import re
 import sys
@@ -10,6 +11,48 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 STYLES = ROOT / "styles.css"
+
+EXPECTED_ASSET_BLOBS = {
+    "assets/goreecloud-logo.svg": "082936062de7839148db89ea3ab4e86ff71341b0",
+    "assets/suite/ai.svg": "1cbe04748f50cb843eef0cbb7233e2769efa275a",
+    "assets/suite/backup.svg": "6e8f2bc02beb4679ed99f2db787e7dc6b4a0f28f",
+    "assets/suite/bookmarks.svg": "2e9947924708df10844a3a81f47585c4da6b931a",
+    "assets/suite/browser.svg": "2a81cc68cb8c1831dfd7bec6c3d0b14e2f421f1f",
+    "assets/suite/calendar.svg": "369c42a204c6b130f49f37f91ec0569256a2c19e",
+    "assets/suite/changelogs.svg": "958878ecde32cadd3e646c606534638e4f5e01fb",
+    "assets/suite/code.svg": "579f0416bd2839bf40e87de7751e319d80bd0bf9",
+    "assets/suite/contacts.svg": "22e818436ebef790333fcf56efa79d5bdfff5c88",
+    "assets/suite/dns.svg": "99c8e09f4e8e65bde57e671e4fd4beb1bd2fcb4a",
+    "assets/suite/documents.svg": "58200e22b053fe17a2d80cc69e9908a3a2987a34",
+    "assets/suite/drive.svg": "a931ebc4e657895128adb6391eb4665c99e74c4a",
+    "assets/suite/feed.svg": "3464434f08f1c200621900ae86a00d04e812a5fb",
+    "assets/suite/gallery.svg": "ff3085d705b567283dd566a3c02e667866458012",
+    "assets/suite/gateway.svg": "f8a94f6a6ff5dece3f93bc15531ee5845fa3db61",
+    "assets/suite/identity.svg": "dc8287e385f86767f0105c48a8f234d8440d7623",
+    "assets/suite/keyboard.svg": "9dea51ca5853dc0faf41d94fbc12ee810480c472",
+    "assets/suite/launcher.svg": "d6768114e689058f1c911beca4050f33c96bd7c2",
+    "assets/suite/location.svg": "ceb93b6d814c80ece0929022eb5edcdfbc346e2d",
+    "assets/suite/mail.svg": "6fcc489ccfc6348514755a9a052dc413ee17ccde",
+    "assets/suite/manager.svg": "024d82d5b5911e426216dfbd6a19d95cd6d71fc3",
+    "assets/suite/memos.svg": "eb9396c3a1891f6afb96849a29110c6f35e65f19",
+    "assets/suite/messenger.svg": "01102af91a43e100c66877489b94929165ec0430",
+    "assets/suite/monitor.svg": "f31c9abab93f1e9e45e34e0eef411705228d1a66",
+    "assets/suite/music.svg": "74d7726676faf6447116153da53790e4c272e03c",
+    "assets/suite/network.svg": "7457cd187d65887189150016b44c28af279635e5",
+    "assets/suite/notes.svg": "9618b85e29f89990320cc3a101f0f3bf6fffc89f",
+    "assets/suite/notify.svg": "1ce1239cd2319a0f96232b1562ec1f6e68d43815",
+    "assets/suite/photos.svg": "7cce0f2f1b1fad209577a4e0294f0b767fd06b14",
+    "assets/suite/search.svg": "fc441c75d6cc2bd0d88a80d77b60994b34475670",
+    "assets/suite/sync.svg": "91e40049d146881df6befe32d836e260e2bd908c",
+    "assets/suite/tasks.svg": "180e162c81b34a0b1dffd20031b36cbb874e2f61",
+    "assets/suite/terminal.svg": "fd28f49fc0dd67e2f3e31480942d555914e8fc5b",
+    "assets/suite/vault.svg": "c34edae0c57a6bac002fb0f940de7ae26cf1450e",
+    "assets/suite/video.svg": "0fbffa1c5210b5da3934c4615b40d59303c0844c",
+}
+
+
+def blob_id(raw: bytes) -> str:
+    return sha1(f"blob {len(raw)}\0".encode("ascii") + raw).hexdigest()
 
 
 def main() -> int:
@@ -37,11 +80,22 @@ def main() -> int:
     if len(ids) != len(set(ids)):
         errors.append("HTML contains duplicate id attributes")
 
+    if "https://www.goreecloud.com/assets/suite/" in html:
+        errors.append("Suite icon references must be origin-local, not loaded from goreecloud.com")
+
+    allowed_images = set(EXPECTED_ASSET_BLOBS)
     for src in re.findall(r'<img[^>]+src="([^"]+)"', html):
-        if src == "assets/goreecloud-logo.svg":
+        if src not in allowed_images:
+            errors.append(f"unexpected or non-local image source: {src}")
+
+    for relative, expected_blob in EXPECTED_ASSET_BLOBS.items():
+        path = ROOT / relative
+        if not path.is_file() or path.is_symlink():
+            errors.append(f"required local identity asset is missing or invalid: {relative}")
             continue
-        if not src.startswith("https://www.goreecloud.com/assets/suite/") or not src.endswith(".svg"):
-            errors.append(f"unexpected image source: {src}")
+        actual_blob = blob_id(path.read_bytes())
+        if actual_blob != expected_blob:
+            errors.append(f"local identity asset is not byte-identical to the reviewed canonical copy: {relative}")
 
     if "@media (prefers-reduced-motion: reduce)" not in css:
         errors.append("reduced-motion handling is missing")
@@ -56,7 +110,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website validation passed: 34 applications, 5 umbrella capabilities, canonical platform-system boundaries.")
+    print("Suite website validation passed: 34 applications, 5 umbrella capabilities, and byte-identical origin-local identity assets.")
     return 0
 
 
