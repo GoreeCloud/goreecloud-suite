@@ -14,6 +14,7 @@ PUBLIC_FILES = (
     "styles.css",
     "_headers",
     "robots.txt",
+    "sitemap.xml",
     "site.webmanifest",
     "assets/goreecloud-logo.svg",
 )
