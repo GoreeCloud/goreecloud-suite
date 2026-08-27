@@ -59,6 +59,16 @@ def main() -> int:
     errors: list[str] = []
     html = INDEX.read_text(encoding="utf-8")
     css = STYLES.read_text(encoding="utf-8")
+    glaze = (ROOT / "glaze-ui-1.5.0.css")
+    if not glaze.is_file():
+        errors.append("vendored Glaze UI 1.5.0 bundle is missing")
+    else:
+        glaze_text = glaze.read_text(encoding="utf-8")
+        for required in ("Glaze UI 1.5.0 Stable", "2c5078410d022eba683c8e029bc3cafe773df0b7", "glaze.states.css", "prefers-reduced-motion"):
+            if required not in glaze_text:
+                errors.append(f"Glaze UI 1.5 bundle marker missing: {required}")
+    if 'name="goreecloud-glaze-ui" content="1.5.0"' not in html or 'data-glaze-ui="1.5.0"' not in html:
+        errors.append("Suite page is not explicitly pinned to Glaze UI 1.5.0")
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
@@ -67,9 +77,9 @@ def main() -> int:
     if html.count('class="capability-card"') != 5:
         errors.append(f"expected 5 umbrella capability cards; found {html.count('class=\"capability-card\"')}")
 
-    for label in ("Glaze UI", "Privacy Shield", "Wardveil Security", "Everkeep", "GoreeCloud Mesh"):
+    for label in ("Glaze UI · Design Center", "Privacy Shield · Privacy Center", "Wardveil Security · Security Center", "Everkeep · Continuity Center", "GoreeCloud Mesh · Mesh Center"):
         if html.count(f"<strong>{label}</strong>") != 1:
-            errors.append(f"platform-system contract must appear exactly once in the principle band: {label}")
+            errors.append(f"platform-system and Center contract must appear exactly once in the principle band: {label}")
 
     if "Open WebUI" in html or "AnythingLLM" in html:
         errors.append("retired GoreeCloud AI front ends must not appear")

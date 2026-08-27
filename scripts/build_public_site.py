@@ -50,6 +50,7 @@ SUITE_ICON_FILES = (
 PUBLIC_FILES = (
     "index.html",
     "styles.css",
+    "glaze-ui-1.5.0.css",
     "_headers",
     "robots.txt",
     "sitemap.xml",
