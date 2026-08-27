@@ -2,7 +2,7 @@
 
 GoreeCloud Suite is the first-party application and service layer of GoreeCloud.
 
-This repository now also owns the dedicated public Suite website intended for **https://suite.goreecloud.com/**. The site is separate from the main GoreeCloud homepage so application, service, lifecycle, capability, and product-identity detail has one focused home instead of being duplicated across `goreecloud.com`.
+This repository owns the dedicated public Suite website intended for **https://suite.goreecloud.com/**. The site is separate from the main GoreeCloud homepage so application, service, lifecycle, capability, and product-identity detail has one focused home instead of being duplicated across `goreecloud.com`.
 
 ## Website scope
 
@@ -15,6 +15,12 @@ The Suite website covers:
 - platform relationships to Glaze UI, Privacy Shield, Wardveil Security, Everkeep, and GoreeCloud Mesh;
 - links back to the main GoreeCloud site and source repositories.
 
+## Origin-local identity assets
+
+The Suite repository stores its own byte-identical copies of the reviewed GoreeCloud logo and all 34 current Suite application icons under `assets/`. The public site references those local files directly instead of loading product artwork from `www.goreecloud.com` or another runtime origin.
+
+`python scripts/validate_site.py` verifies the expected Git blob identity of every localized logo and icon. This prevents silent artwork drift while keeping `suite.goreecloud.com` independent of another GoreeCloud website for its visual identity assets.
+
 ## Cloudflare Pages
 
 Recommended production configuration:
@@ -26,7 +32,7 @@ Recommended production configuration:
 - Root directory: blank
 - Custom domain: `suite.goreecloud.com`
 
-The build script publishes an explicit allowlist into `dist/` so repository documentation is not automatically exposed.
+The build script publishes an explicit allowlist into `dist/`, including the localized identity assets, so repository documentation is not automatically exposed.
 
 ## Product identity
 
