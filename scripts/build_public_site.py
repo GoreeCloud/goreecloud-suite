@@ -9,6 +9,44 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
+
+SUITE_ICON_FILES = (
+    "assets/suite/ai.svg",
+    "assets/suite/backup.svg",
+    "assets/suite/bookmarks.svg",
+    "assets/suite/browser.svg",
+    "assets/suite/calendar.svg",
+    "assets/suite/changelogs.svg",
+    "assets/suite/code.svg",
+    "assets/suite/contacts.svg",
+    "assets/suite/dns.svg",
+    "assets/suite/documents.svg",
+    "assets/suite/drive.svg",
+    "assets/suite/feed.svg",
+    "assets/suite/gallery.svg",
+    "assets/suite/gateway.svg",
+    "assets/suite/identity.svg",
+    "assets/suite/keyboard.svg",
+    "assets/suite/launcher.svg",
+    "assets/suite/location.svg",
+    "assets/suite/mail.svg",
+    "assets/suite/manager.svg",
+    "assets/suite/memos.svg",
+    "assets/suite/messenger.svg",
+    "assets/suite/monitor.svg",
+    "assets/suite/music.svg",
+    "assets/suite/network.svg",
+    "assets/suite/notes.svg",
+    "assets/suite/notify.svg",
+    "assets/suite/photos.svg",
+    "assets/suite/search.svg",
+    "assets/suite/sync.svg",
+    "assets/suite/tasks.svg",
+    "assets/suite/terminal.svg",
+    "assets/suite/vault.svg",
+    "assets/suite/video.svg",
+)
+
 PUBLIC_FILES = (
     "index.html",
     "styles.css",
@@ -17,6 +55,7 @@ PUBLIC_FILES = (
     "sitemap.xml",
     "site.webmanifest",
     "assets/goreecloud-logo.svg",
+    *SUITE_ICON_FILES,
 )
 
 
