@@ -1,0 +1,70 @@
+name: Migrate Suite website to Glaze UI 1.5 Stable
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/glaze-ui-1.5-migration.yml
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vendor and apply Glaze UI 1.5.0
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          import urllib.request
+
+          root = Path.cwd()
+          revision = "2c5078410d022eba683c8e029bc3cafe773df0b7"
+          files = ["glaze.css","glaze.controls.css","glaze.expressive.css","glaze.formfactors.css","glaze.accessibility.css","glaze.color.css","glaze.motion.css","glaze.materials.css","glaze.layout.css","glaze.states.css"]
+          base = f"https://raw.githubusercontent.com/GoreeCloud/goreecloud-glaze-ui/{revision}/css"
+          parts = ["/* GoreeCloud Glaze UI 1.5.0 Stable — Suite vendored bundle. */", f"/* Source revision: {revision}. */"]
+          for name in files:
+              with urllib.request.urlopen(f"{base}/{name}", timeout=30) as response:
+                  parts.append(f"\n/* ===== {name} ===== */\n" + response.read().decode("utf-8"))
+          parts.append(r'''
+          body.glaze-canvas { margin:0; min-height:100vh; color:var(--glaze-text); font-family:var(--glaze-font-sans); background:radial-gradient(circle at 12% -8%,color-mix(in srgb,var(--glaze-accent) 14%,transparent),transparent 34rem),radial-gradient(circle at 88% 2%,color-mix(in srgb,var(--glaze-accent-2) 10%,transparent),transparent 30rem),linear-gradient(180deg,var(--glaze-canvas-accent),var(--glaze-canvas)); }
+          .site-header { border-bottom:1px solid var(--glaze-line); background:color-mix(in srgb,var(--glaze-surface-strong) 82%,transparent); -webkit-backdrop-filter:blur(var(--glaze-blur)) saturate(135%); backdrop-filter:blur(var(--glaze-blur)) saturate(135%); box-shadow:0 10px 34px color-mix(in srgb,var(--glaze-text) 5%,transparent); }
+          .hero-panel,.app-card,.principle-grid>div,.capability-card { border:1px solid var(--glaze-line); border-radius:var(--glaze-radius-xl); background:color-mix(in srgb,var(--glaze-surface-strong) 91%,transparent); box-shadow:var(--glaze-shadow-soft); }
+          .button,button { min-height:var(--glaze-target-min); border-radius:var(--glaze-radius-control); transition:transform var(--glaze-motion-fast) var(--glaze-ease-standard),box-shadow var(--glaze-motion-fast) var(--glaze-ease-standard),background-color var(--glaze-motion-fast) var(--glaze-ease-standard); }
+          nav a,.badge,.eyebrow { border-radius:var(--glaze-radius-pill); }
+          a:focus-visible,button:focus-visible,[tabindex]:focus-visible { outline:var(--glaze-focus-width) solid var(--glaze-accent); outline-offset:var(--glaze-focus-offset); }
+          @media (hover:hover) and (pointer:fine) { .app-card:hover,.capability-card:hover,.hero-panel:hover { transform:translateY(-2px); box-shadow:var(--glaze-shadow-raised); } .button:hover,button:hover { transform:translateY(-1px); } }
+          @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:0ms!important; } }
+          @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) { .site-header { background:var(--glaze-surface-strong); } }
+          ''')
+          (root / "glaze-ui-1.5.0.css").write_text("\n".join(parts).replace("          ", ""), encoding="utf-8")
+
+          index = root / "index.html"
+          text = index.read_text(encoding="utf-8")
+          meta = '  <meta name="goreecloud-glaze-ui" content="1.5.0">\n'
+          link = '  <link rel="stylesheet" href="glaze-ui-1.5.0.css" data-glaze-ui="1.5.0">\n'
+          if 'name="goreecloud-glaze-ui"' not in text:
+              text = text.replace("</head>", meta + link + "</head>", 1)
+          elif 'data-glaze-ui="1.5.0"' not in text:
+              text = text.replace("</head>", link + "</head>", 1)
+          text = re.sub(r'<body(?![^>]*\bclass=)([^>]*)>', r'<body class="glaze-canvas"\1>', text, count=1)
+          text = re.sub(r'<body([^>]*\bclass=")([^"]*)"', lambda m: m.group(0) if "glaze-canvas" in m.group(2).split() else f'<body{m.group(1)}{m.group(2)} glaze-canvas"', text, count=1)
+          index.write_text(text, encoding="utf-8")
+
+          adoption = root / "docs/glaze-ui-1.5-adoption.md"
+          adoption.parent.mkdir(exist_ok=True)
+          adoption.write_text(f'''# Glaze UI 1.5.0 adoption\n\nGoreeCloud Suite targets Glaze UI **1.5.0 Stable** from `GoreeCloud/goreecloud-glaze-ui` revision `{revision}`. The production stylesheet is vendored in-repository, uses the Design Center Stable web layer order, excludes Candidate/Wearable layers, and adds Suite-specific material, interaction, focus, motion, and card mapping without a cross-domain runtime dependency.\n''', encoding="utf-8")
+      - name: Commit migration
+        run: |
+          git config user.name "GoreeCloud"
+          git config user.email "295260680+GoreeCloud@users.noreply.github.com"
+          git add index.html glaze-ui-1.5.0.css docs/glaze-ui-1.5-adoption.md
+          if git diff --cached --quiet; then
+            echo "Glaze UI 1.5.0 migration already applied"
+          else
+            git commit -m "Adopt Glaze UI 1.5 Stable on Suite website"
+            git push
+          fi
