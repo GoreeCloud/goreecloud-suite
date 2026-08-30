@@ -92,19 +92,33 @@ def main() -> int:
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
-    if html.count('class="app-card"') != 34:
-        errors.append(f"expected 34 Suite application cards; found {html.count('class=\"app-card\"')}")
+    if html.count('class="app-card"') != 37:
+        errors.append(f"expected 37 Suite application cards; found {html.count('class=\"app-card\"')}")
     if html.count('class="capability-card"') != 5:
         errors.append(f"expected 5 umbrella capability cards; found {html.count('class=\"capability-card\"')}")
 
-    for label in ("Glaze UI · Design Center", "Privacy Shield · Privacy Center", "Wardveil Security · Security Center", "Everkeep · Continuity Center", "GoreeCloud Mesh · Mesh Center"):
+    for label in (
+        "Glaze UI · Design Center",
+        "Privacy Shield · Privacy Center",
+        "Wardveil Security · Security Center",
+        "Everkeep · Continuity Center",
+        "GoreeCloud Mesh · Mesh Center",
+        "GoreeCloud Identity · Identity Center",
+    ):
         if html.count(f"<strong>{label}</strong>") != 1:
             errors.append(f"platform-system and Center contract must appear exactly once in the principle band: {label}")
+
+    for product in ("GoreeCloud File Manager", "GoreeCloud Maps", "GoreeCloud App Store"):
+        if html.count(f"<h4>{product}</h4>") != 1:
+            errors.append(f"current Suite application card missing: {product}")
+    for neutral_mark in ('>FM</span>', '>MP</span>', '>AS</span>'):
+        if neutral_mark not in html:
+            errors.append("new products without approved canonical artwork must use neutral non-official text marks")
 
     if "Open WebUI" in html or "AnythingLLM" in html:
         errors.append("retired GoreeCloud AI front ends must not appear")
     if "GoreeCloud Identity" not in html:
-        errors.append("GoreeCloud Identity application card is missing")
+        errors.append("GoreeCloud Identity application/system presentation is missing")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     if len(ids) != len(set(ids)):
@@ -140,7 +154,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website Glaze UI 2.0 validation passed: 34 applications, 5 umbrella capabilities, and byte-identical origin-local identity assets.")
+    print("Suite website Glaze UI 2.0 validation passed: 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, and neutral pending-artwork marks.")
     return 0
 
 
