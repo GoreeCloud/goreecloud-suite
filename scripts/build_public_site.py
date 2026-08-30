@@ -7,6 +7,8 @@ from pathlib import Path
 import shutil
 import sys
 
+from glaze_ui_2 import apply_glaze_ui_2
+
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 
@@ -50,7 +52,7 @@ SUITE_ICON_FILES = (
 PUBLIC_FILES = (
     "index.html",
     "styles.css",
-    "glaze-ui-1.5.0.css",
+    "glaze-ui-2.0.0.css",
     "_headers",
     "robots.txt",
     "sitemap.xml",
@@ -75,7 +77,10 @@ def main() -> int:
                 raise ValueError(f"invalid public source: {relative}")
             target = DIST / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, target)
+            if relative == "index.html":
+                target.write_text(apply_glaze_ui_2(source.read_text(encoding="utf-8")), encoding="utf-8")
+            else:
+                shutil.copy2(source, target)
     except (OSError, ValueError) as exc:
         print(f"Suite website build failed: {exc}")
         return 1
