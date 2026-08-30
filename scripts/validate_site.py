@@ -8,9 +8,12 @@ from pathlib import Path
 import re
 import sys
 
+from glaze_ui_2 import GLAZE_PROMOTION_REVISION, apply_glaze_ui_2
+
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 STYLES = ROOT / "styles.css"
+GLAZE = ROOT / "glaze-ui-2.0.0.css"
 
 EXPECTED_ASSET_BLOBS = {
     "assets/goreecloud-logo.svg": "082936062de7839148db89ea3ab4e86ff71341b0",
@@ -57,18 +60,35 @@ def blob_id(raw: bytes) -> str:
 
 def main() -> int:
     errors: list[str] = []
-    html = INDEX.read_text(encoding="utf-8")
+    html = apply_glaze_ui_2(INDEX.read_text(encoding="utf-8"))
     css = STYLES.read_text(encoding="utf-8")
-    glaze = (ROOT / "glaze-ui-1.5.0.css")
-    if not glaze.is_file():
-        errors.append("vendored Glaze UI 1.5.0 bundle is missing")
+
+    if not GLAZE.is_file():
+        errors.append("vendored Glaze UI 2.0.0 bundle is missing")
     else:
-        glaze_text = glaze.read_text(encoding="utf-8")
-        for required in ("Glaze UI 1.5.0 Stable", "2c5078410d022eba683c8e029bc3cafe773df0b7", "glaze.states.css", "prefers-reduced-motion"):
+        glaze_text = GLAZE.read_text(encoding="utf-8")
+        for required in (
+            "Glaze UI 2.0.0 Stable integration",
+            GLAZE_PROMOTION_REVISION,
+            "prefers-reduced-motion",
+            "prefers-reduced-transparency",
+            "forced-colors",
+            "--glaze-touch-min:48px",
+        ):
             if required not in glaze_text:
-                errors.append(f"Glaze UI 1.5 bundle marker missing: {required}")
-    if 'name="goreecloud-glaze-ui" content="1.5.0"' not in html or 'data-glaze-ui="1.5.0"' not in html:
-        errors.append("Suite page is not explicitly pinned to Glaze UI 1.5.0")
+                errors.append(f"Glaze UI 2.0 bundle marker missing: {required}")
+
+    for required in (
+        'name="goreecloud-glaze-ui" content="2.0.0"',
+        'data-glaze-ui="2.0.0"',
+        'class="site-header glaze-material-soft"',
+        'class="glaze-navigation-capsule"',
+        'Stable 2.0.0 design, interaction, accessibility, motion, material, and form-factor contract',
+    ):
+        if required not in html:
+            errors.append(f"Suite rendered page is missing Glaze UI 2.0 contract marker: {required}")
+    if 'data-glaze-ui="1.5.0"' in html:
+        errors.append("Suite rendered page still activates Glaze UI 1.5")
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
@@ -108,11 +128,11 @@ def main() -> int:
             errors.append(f"local identity asset is not byte-identical to the reviewed canonical copy: {relative}")
 
     if "@media (prefers-reduced-motion: reduce)" not in css:
-        errors.append("reduced-motion handling is missing")
+        errors.append("base reduced-motion handling is missing")
     if "@media (prefers-reduced-transparency: reduce)" not in css:
-        errors.append("reduced-transparency handling is missing")
+        errors.append("base reduced-transparency handling is missing")
     if ":focus-visible" not in css:
-        errors.append("visible keyboard focus styling is missing")
+        errors.append("base visible keyboard focus styling is missing")
 
     if errors:
         print("Suite website validation failed:")
@@ -120,7 +140,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website validation passed: 34 applications, 5 umbrella capabilities, and byte-identical origin-local identity assets.")
+    print("Suite website Glaze UI 2.0 validation passed: 34 applications, 5 umbrella capabilities, and byte-identical origin-local identity assets.")
     return 0
 
 
