@@ -64,6 +64,10 @@ Production configuration:
 
 The build script publishes an explicit allowlist into `dist/`, including localized identity assets, so repository documentation is not automatically exposed.
 
+### Acceptance boundary
+
+A successful source build or green repository validator does not by itself establish an accepted public release. The exact candidate revision must pass the applicable Cloudflare branch-preview verification before merge, and the resulting `main` revision must be verified on `suite.goreecloud.com` after deployment. Source, built artifact, and deployed bytes must agree before the modernization is recorded as production-accepted.
+
 ## Product identity
 
 Application cards use reviewed canonical application identities where approved. Platform-specific derivatives may change size, mask, padding, rasterization, or adaptive layers while preserving the underlying approved identity.
