@@ -6,14 +6,15 @@ This repository owns the dedicated public Suite website at **https://suite.goree
 
 ## Current public baseline
 
-- Production design target: **Glaze UI 2.0.0 Stable**
+- Current accepted production design baseline: **Glaze UI 2.0.0 Stable**
+- Current source/build migration target: **Glaze UI 2.1.0 Stable**
 - Current rendered directory: **37 GoreeCloud application/service cards**
 - Umbrella capability cards: **5**
 - Substantive platform systems represented: **6**
 - Approved existing product artwork is synchronized locally and validated by Git blob identity.
 - GoreeCloud File Manager, GoreeCloud Maps, and GoreeCloud App Store currently use neutral text marks because no approved canonical product artwork is present for them in the reviewed branding catalog. The Suite site must not invent official icons.
 
-Glaze UI 2.1 remains Candidate and is not a Stable production-conformance target.
+Glaze UI 2.1.0 is the current Stable design-system contract. This branch adopts it at source/build level, but Suite does not inherit production 2.1 conformance by declaration. Exact repository validation, rendered branch-preview acceptance, authorized merge, and exact production verification remain separate gates.
 
 ## Website scope
 
@@ -47,9 +48,9 @@ Products that do not yet have approved canonical artwork use an explicitly neutr
 
 ## Glaze UI integration
 
-The public artifact is normalized onto Glaze UI 2.0.0 Stable during the explicit build step. The shared layer covers material surfaces, 48px interaction targets, focus behavior, responsive navigation, safe-area handling, reduced motion, reduced transparency, increased contrast, forced colors, and print resilience.
+The current migration candidate normalizes the public artifact onto Glaze UI 2.1.0 Stable during the explicit build step. The shared layer follows the governing material rule **Content is solid. Interaction is glazed.** It covers the 48px general interaction floor, 56px Touch Assistance floor, focus behavior, responsive navigation, density and large-text behavior, safe-area handling, reduced motion, reduced transparency, increased contrast, forced colors, deterministic reduced-material/performance fallbacks, and print resilience.
 
-Source-level 1.x references are migration debt rather than a valid production target and should be removed as the source pipeline becomes fully 2.0-native.
+Glaze UI 2.0.0 remains the immediately preceding accepted production baseline until this exact 2.1 candidate earns rendered preview, merge, deployment, and post-deployment acceptance. Historical 1.x/2.0 references may remain only where they are explicitly identified as historical or rollback context rather than current design guidance.
 
 ## Cloudflare Pages
 
