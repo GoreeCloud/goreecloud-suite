@@ -122,10 +122,12 @@ def main() -> int:
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
-    if html.count('class="app-card"') != 37:
-        errors.append(f"expected 37 Suite application cards; found {html.count('class=\"app-card\"')}")
-    if html.count('class="capability-card"') != 5:
-        errors.append(f"expected 5 umbrella capability cards; found {html.count('class=\"capability-card\"')}")
+    app_card_count = html.count('class="app-card"')
+    if app_card_count != 37:
+        errors.append(f"expected 37 Suite application cards; found {app_card_count}")
+    capability_card_count = html.count('class="capability-card"')
+    if capability_card_count != 5:
+        errors.append(f"expected 5 umbrella capability cards; found {capability_card_count}")
 
     for label in (
         "Glaze UI · Design Center",
