@@ -1,4 +1,4 @@
-"""Normalize the GoreeCloud Suite public HTML onto Glaze UI 2.0.0 Stable.
+"""Normalize the GoreeCloud Suite public HTML onto Glaze UI 2.1.0 Stable.
 
 The source remains intentionally conservative; this build boundary also reconciles
 newer first-party products and platform-system language before the public artifact
@@ -8,8 +8,8 @@ rather than inventing an official icon.
 
 from __future__ import annotations
 
-GLAZE_VERSION = "2.0.0"
-GLAZE_PROMOTION_REVISION = "ff3fff4306bd53ea9c0715a7c0d64265bb038617"
+GLAZE_VERSION = "2.1.0"
+GLAZE_PROMOTION_REVISION = "c49113eb8b93c267613fdf1bbca1f814495acad7"
 
 FILE_MANAGER_CARD = '''<article class="app-card"><span class="app-mark app-mark-pending" aria-hidden="true">FM</span><h4>GoreeCloud File Manager</h4><p>First-party file-management experience for local and connected GoreeCloud storage surfaces.</p><span class="badge growing">Active Development</span></article>'''
 MAPS_CARD = '''<article class="app-card"><span class="app-mark app-mark-pending" aria-hidden="true">MP</span><h4>GoreeCloud Maps</h4><p>GoreeCloud mapping experience with privacy, location, navigation, and identity boundaries kept explicit.</p><span class="badge growing">Active Development</span></article>'''
@@ -27,16 +27,21 @@ def _insert_after(html: str, anchor: str, addition: str) -> str:
 
 def apply_glaze_ui_2(html: str) -> str:
     replacements = (
-        ('name="goreecloud-glaze-ui" content="1.5.0"', 'name="goreecloud-glaze-ui" content="2.0.0"'),
-        ('href="glaze-ui-1.5.0.css" data-glaze-ui="1.5.0"', 'href="glaze-ui-2.0.0.css" data-glaze-ui="2.0.0"'),
+        ('name="goreecloud-glaze-ui" content="1.5.0"', 'name="goreecloud-glaze-ui" content="2.1.0"'),
+        ('name="goreecloud-glaze-ui" content="2.0.0"', 'name="goreecloud-glaze-ui" content="2.1.0"'),
+        ('href="glaze-ui-1.5.0.css" data-glaze-ui="1.5.0"', 'href="glaze-ui-2.1.0.css" data-glaze-ui="2.1.0"'),
+        ('href="glaze-ui-2.0.0.css" data-glaze-ui="2.0.0"', 'href="glaze-ui-2.1.0.css" data-glaze-ui="2.1.0"'),
         ('class="site-header"', 'class="site-header glaze-material-soft"'),
         ('<nav aria-label="Primary navigation">', '<nav class="glaze-navigation-capsule" aria-label="Primary navigation">'),
         ('class="button primary"', 'class="button primary glaze-button"'),
         ('class="button" href="#capabilities"', 'class="button glaze-button" href="#capabilities"'),
         ('class="hero-panel"', 'class="hero-panel glaze-material"'),
-        ('Stable 1.5.0 design, interaction, accessibility, motion, material, and form-factor contract', 'Stable 2.0.0 design, interaction, accessibility, motion, material, and form-factor contract'),
-        ('Glaze UI 1.5.0', 'Glaze UI 2.0.0'),
-        ('Glaze UI 1.5', 'Glaze UI 2.0'),
+        ('Stable 1.5.0 design, interaction, accessibility, motion, material, and form-factor contract', 'Stable 2.1.0 design, interaction, accessibility, motion, material, density, and form-factor contract'),
+        ('Stable 2.0.0 design, interaction, accessibility, motion, material, and form-factor contract', 'Stable 2.1.0 design, interaction, accessibility, motion, material, density, and form-factor contract'),
+        ('Glaze UI 1.5.0', 'Glaze UI 2.1.0'),
+        ('Glaze UI 2.0.0', 'Glaze UI 2.1.0'),
+        ('Glaze UI 1.5', 'Glaze UI 2.1'),
+        ('Glaze UI 2.0', 'Glaze UI 2.1'),
         ('the five substantive platform systems', 'the six substantive platform systems'),
         ('<div><strong>34</strong><span>current applications & services</span></div>', '<div><strong>37</strong><span>current applications & services</span></div>'),
         (
