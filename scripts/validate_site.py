@@ -13,7 +13,7 @@ from glaze_ui_2 import GLAZE_PROMOTION_REVISION, apply_glaze_ui_2
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 STYLES = ROOT / "styles.css"
-GLAZE = ROOT / "glaze-ui-2.0.0.css"
+GLAZE = ROOT / "glaze-ui-2.1.0.css"
 
 EXPECTED_ASSET_BLOBS = {
     "assets/goreecloud-logo.svg": "082936062de7839148db89ea3ab4e86ff71341b0",
@@ -64,31 +64,36 @@ def main() -> int:
     css = STYLES.read_text(encoding="utf-8")
 
     if not GLAZE.is_file():
-        errors.append("vendored Glaze UI 2.0.0 bundle is missing")
+        errors.append("vendored Glaze UI 2.1.0 bundle is missing")
     else:
         glaze_text = GLAZE.read_text(encoding="utf-8")
         for required in (
-            "Glaze UI 2.0.0 Stable integration",
+            "Glaze UI 2.1.0 Stable integration",
             GLAZE_PROMOTION_REVISION,
+            "Content is solid. Interaction is glazed.",
             "prefers-reduced-motion",
             "prefers-reduced-transparency",
             "forced-colors",
-            "--glaze-touch-min:48px",
+            "--glaze-touch-assisted:56px",
+            "data-glaze-density=comfortable",
+            "data-glaze-density=compact",
+            "data-glaze-performance=reduced",
+            "data-glaze-large-text=true",
         ):
             if required not in glaze_text:
-                errors.append(f"Glaze UI 2.0 bundle marker missing: {required}")
+                errors.append(f"Glaze UI 2.1 bundle marker missing: {required}")
 
     for required in (
-        'name="goreecloud-glaze-ui" content="2.0.0"',
-        'data-glaze-ui="2.0.0"',
+        'name="goreecloud-glaze-ui" content="2.1.0"',
+        'data-glaze-ui="2.1.0"',
         'class="site-header glaze-material-soft"',
         'class="glaze-navigation-capsule"',
-        'Stable 2.0.0 design, interaction, accessibility, motion, material, and form-factor contract',
+        'Stable 2.1.0 design, interaction, accessibility, motion, material, density, and form-factor contract',
     ):
         if required not in html:
-            errors.append(f"Suite rendered page is missing Glaze UI 2.0 contract marker: {required}")
-    if 'data-glaze-ui="1.5.0"' in html:
-        errors.append("Suite rendered page still activates Glaze UI 1.5")
+            errors.append(f"Suite rendered page is missing Glaze UI 2.1 contract marker: {required}")
+    if 'data-glaze-ui="1.5.0"' in html or 'data-glaze-ui="2.0.0"' in html:
+        errors.append("Suite rendered page still activates a superseded Glaze UI bundle")
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
@@ -154,7 +159,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website Glaze UI 2.0 validation passed: 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, and neutral pending-artwork marks.")
+    print("Suite website Glaze UI 2.1 validation passed: 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, neutral pending-artwork marks, 2.1 material hierarchy, density, touch assistance, accessibility, and performance fallbacks.")
     return 0
 
 
