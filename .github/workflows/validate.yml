@@ -22,6 +22,8 @@ jobs:
         with:
           python-version: '3.13'
           check-latest: false
+      - name: Validate Suite repository governance
+        run: python scripts/validate_repository_governance.py
       - name: Validate Suite website
         run: python scripts/validate_site.py
       - name: Validate Suite responsive layout
