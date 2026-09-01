@@ -24,5 +24,7 @@ jobs:
           check-latest: false
       - name: Validate Suite website
         run: python scripts/validate_site.py
+      - name: Validate Suite responsive layout
+        run: python scripts/validate_responsive_layout.py
       - name: Build isolated public artifact
         run: python scripts/build_public_site.py
