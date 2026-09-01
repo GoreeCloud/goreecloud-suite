@@ -18,6 +18,7 @@ GLAZE = ROOT / "glaze-ui-2.1.0.css"
 EXPECTED_ASSET_BLOBS = {
     "assets/goreecloud-logo.svg": "082936062de7839148db89ea3ab4e86ff71341b0",
     "assets/suite/ai.svg": "1cbe04748f50cb843eef0cbb7233e2769efa275a",
+    "assets/suite/app-store.svg": "05c66a2a4c8edcc194183bb8ffb10ca90d8eaeef",
     "assets/suite/backup.svg": "6e8f2bc02beb4679ed99f2db787e7dc6b4a0f28f",
     "assets/suite/bookmarks.svg": "2e9947924708df10844a3a81f47585c4da6b931a",
     "assets/suite/browser.svg": "2a81cc68cb8c1831dfd7bec6c3d0b14e2f421f1f",
@@ -29,14 +30,17 @@ EXPECTED_ASSET_BLOBS = {
     "assets/suite/documents.svg": "58200e22b053fe17a2d80cc69e9908a3a2987a34",
     "assets/suite/drive.svg": "a931ebc4e657895128adb6391eb4665c99e74c4a",
     "assets/suite/feed.svg": "3464434f08f1c200621900ae86a00d04e812a5fb",
+    "assets/suite/file-manager.svg": "c723a84eb2ecb29ef8a0cef845eb1d2cff714cd0",
     "assets/suite/gallery.svg": "ff3085d705b567283dd566a3c02e667866458012",
     "assets/suite/gateway.svg": "f8a94f6a6ff5dece3f93bc15531ee5845fa3db61",
     "assets/suite/identity.svg": "dc8287e385f86767f0105c48a8f234d8440d7623",
+    "assets/suite/index.svg": "797cfbd9ae490e37b5a90efe02905159158a8e88",
     "assets/suite/keyboard.svg": "9dea51ca5853dc0faf41d94fbc12ee810480c472",
     "assets/suite/launcher.svg": "d6768114e689058f1c911beca4050f33c96bd7c2",
     "assets/suite/location.svg": "ceb93b6d814c80ece0929022eb5edcdfbc346e2d",
     "assets/suite/mail.svg": "6fcc489ccfc6348514755a9a052dc413ee17ccde",
     "assets/suite/manager.svg": "024d82d5b5911e426216dfbd6a19d95cd6d71fc3",
+    "assets/suite/maps.svg": "07b6e52e04c95e1ec9f703a9d323cf799481351c",
     "assets/suite/memos.svg": "eb9396c3a1891f6afb96849a29110c6f35e65f19",
     "assets/suite/messenger.svg": "01102af91a43e100c66877489b94929165ec0430",
     "assets/suite/monitor.svg": "f31c9abab93f1e9e45e34e0eef411705228d1a66",
@@ -51,6 +55,13 @@ EXPECTED_ASSET_BLOBS = {
     "assets/suite/terminal.svg": "fd28f49fc0dd67e2f3e31480942d555914e8fc5b",
     "assets/suite/vault.svg": "c34edae0c57a6bac002fb0f940de7ae26cf1450e",
     "assets/suite/video.svg": "0fbffa1c5210b5da3934c4615b40d59303c0844c",
+}
+
+APPROVED_NEW_PRODUCT_IMAGES = {
+    "GoreeCloud App Store": "assets/suite/app-store.svg",
+    "GoreeCloud File Manager": "assets/suite/file-manager.svg",
+    "GoreeCloud Maps": "assets/suite/maps.svg",
+    "GoreeCloud Index": "assets/suite/index.svg",
 }
 
 
@@ -123,8 +134,8 @@ def main() -> int:
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
     app_card_count = html.count('class="app-card"')
-    if app_card_count != 37:
-        errors.append(f"expected 37 Suite application cards; found {app_card_count}")
+    if app_card_count != 38:
+        errors.append(f"expected 38 Suite application cards; found {app_card_count}")
     capability_card_count = html.count('class="capability-card"')
     if capability_card_count != 5:
         errors.append(f"expected 5 umbrella capability cards; found {capability_card_count}")
@@ -140,12 +151,14 @@ def main() -> int:
         if html.count(f"<strong>{label}</strong>") != 1:
             errors.append(f"platform-system and Center contract must appear exactly once in the principle band: {label}")
 
-    for product in ("GoreeCloud File Manager", "GoreeCloud Maps", "GoreeCloud App Store"):
+    for product, icon in APPROVED_NEW_PRODUCT_IMAGES.items():
         if html.count(f"<h4>{product}</h4>") != 1:
             errors.append(f"current Suite application card missing: {product}")
-    for neutral_mark in ('>FM</span>', '>MP</span>', '>AS</span>'):
-        if neutral_mark not in html:
-            errors.append("new products without approved canonical artwork must use neutral non-official text marks")
+        if html.count(f'<img src="{icon}"') != 1:
+            errors.append(f"approved Suite product identity is not rendered exactly once: {product} -> {icon}")
+
+    if "app-mark-pending" in html or any(mark in html for mark in ('>FM</span>', '>MP</span>', '>AS</span>')):
+        errors.append("approved Suite products must not regress to pending letter-mark placeholders")
 
     if "Open WebUI" in html or "AnythingLLM" in html:
         errors.append("retired GoreeCloud AI front ends must not appear")
@@ -186,7 +199,11 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website Glaze UI 2.1 validation passed: canonical source and rendered output agree across 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, neutral pending-artwork marks, 2.1 material hierarchy, density, touch assistance, accessibility, and performance fallbacks.")
+    print(
+        "Suite website Glaze UI 2.1 validation passed: canonical source and rendered output agree across "
+        "38 applications, 6 substantive platform systems, 5 umbrella capabilities, approved canonical "
+        "product artwork, 2.1 material hierarchy, density, touch assistance, accessibility, and performance fallbacks."
+    )
     return 0
 
 
