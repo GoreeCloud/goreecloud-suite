@@ -60,8 +60,33 @@ def blob_id(raw: bytes) -> str:
 
 def main() -> int:
     errors: list[str] = []
-    html = apply_glaze_ui_2(INDEX.read_text(encoding="utf-8"))
+    source_html = INDEX.read_text(encoding="utf-8")
+    html = apply_glaze_ui_2(source_html)
     css = STYLES.read_text(encoding="utf-8")
+
+    for required in (
+        'name="goreecloud-glaze-ui" content="2.1.0"',
+        'data-glaze-ui="2.1.0"',
+        'class="site-header glaze-material-soft"',
+        'class="glaze-navigation-capsule"',
+        'Stable 2.1.0 design, interaction, accessibility, motion, material, density, and form-factor contract',
+        'GoreeCloud Identity · Identity Center',
+    ):
+        if required not in source_html:
+            errors.append(f"Suite canonical source is missing current Glaze UI/ecosystem marker: {required}")
+    for stale in (
+        'data-glaze-ui="1.5.0"',
+        'data-glaze-ui="2.0.0"',
+        'href="glaze-ui-1.5.0.css"',
+        'href="glaze-ui-2.0.0.css"',
+        'Stable 1.5.0 design',
+        'Stable 2.0.0 design',
+        'the five substantive platform systems',
+    ):
+        if stale in source_html:
+            errors.append(f"Suite canonical source still contains superseded active state: {stale}")
+    if source_html != html:
+        errors.append("Suite build normalizer must not need to rewrite the current canonical source template")
 
     if not GLAZE.is_file():
         errors.append("vendored Glaze UI 2.1.0 bundle is missing")
@@ -97,10 +122,12 @@ def main() -> int:
 
     if '<link rel="canonical" href="https://suite.goreecloud.com/">' not in html:
         errors.append("canonical Suite domain is missing")
-    if html.count('class="app-card"') != 37:
-        errors.append(f"expected 37 Suite application cards; found {html.count('class=\"app-card\"')}")
-    if html.count('class="capability-card"') != 5:
-        errors.append(f"expected 5 umbrella capability cards; found {html.count('class=\"capability-card\"')}")
+    app_card_count = html.count('class="app-card"')
+    if app_card_count != 37:
+        errors.append(f"expected 37 Suite application cards; found {app_card_count}")
+    capability_card_count = html.count('class="capability-card"')
+    if capability_card_count != 5:
+        errors.append(f"expected 5 umbrella capability cards; found {capability_card_count}")
 
     for label in (
         "Glaze UI · Design Center",
@@ -159,7 +186,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print("Suite website Glaze UI 2.1 validation passed: 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, neutral pending-artwork marks, 2.1 material hierarchy, density, touch assistance, accessibility, and performance fallbacks.")
+    print("Suite website Glaze UI 2.1 validation passed: canonical source and rendered output agree across 37 applications, 6 substantive platform systems, 5 umbrella capabilities, approved existing artwork, neutral pending-artwork marks, 2.1 material hierarchy, density, touch assistance, accessibility, and performance fallbacks.")
     return 0
 
 

@@ -6,15 +6,14 @@ This repository owns the dedicated public Suite website at **https://suite.goree
 
 ## Current public baseline
 
-- Current accepted production design baseline: **Glaze UI 2.0.0 Stable**
-- Current source/build migration target: **Glaze UI 2.1.0 Stable**
-- Current rendered directory: **37 GoreeCloud application/service cards**
-- Umbrella capability cards: **5**
-- Substantive platform systems represented: **6**
-- Approved existing product artwork is synchronized locally and validated by Git blob identity.
-- GoreeCloud File Manager, GoreeCloud Maps, and GoreeCloud App Store currently use neutral text marks because no approved canonical product artwork is present for them in the reviewed branding catalog. The Suite site must not invent official icons.
+- Current Stable design-system target: **Glaze UI 2.1.0**.
+- Current rendered directory: **37 GoreeCloud application/service cards**.
+- Umbrella capability cards: **5**.
+- Substantive platform systems represented: **6**.
+- Approved existing product artwork is synchronized locally and validated by Git blob identity against `GoreeCloud/goreecloud-branding-assets`.
+- GoreeCloud File Manager, GoreeCloud Maps, and GoreeCloud App Store use neutral text marks because no approved canonical product artwork is present for them in the reviewed branding catalog. The Suite site must not invent official icons.
 
-Glaze UI 2.1.0 is the current Stable design-system contract. This branch adopts it at source/build level, but Suite does not inherit production 2.1 conformance by declaration. Exact repository validation, rendered branch-preview acceptance, authorized merge, and exact production verification remain separate gates.
+Glaze UI 2.1.0 is the current Stable design-system contract. Repository-local validation, rendered preview acceptance, authorized merge, deployment, and exact production verification remain separate gates for every new Suite revision. A successful source build does not by itself establish production acceptance.
 
 ## Website scope
 
@@ -48,9 +47,9 @@ Products that do not yet have approved canonical artwork use an explicitly neutr
 
 ## Glaze UI integration
 
-The current migration candidate normalizes the public artifact onto Glaze UI 2.1.0 Stable during the explicit build step. The shared layer follows the governing material rule **Content is solid. Interaction is glazed.** It covers the 48px general interaction floor, 56px Touch Assistance floor, focus behavior, responsive navigation, density and large-text behavior, safe-area handling, reduced motion, reduced transparency, increased contrast, forced colors, deterministic reduced-material/performance fallbacks, and print resilience.
+The canonical source template and deployable artifact both target Glaze UI 2.1.0 Stable. The shared layer follows the governing material rule **Content is solid. Interaction is glazed.** It covers the 48px general interaction floor, 56px Touch Assistance floor, focus behavior, responsive navigation, comfortable/compact density, large-text behavior, safe-area handling, reduced motion, reduced transparency, increased contrast, forced colors, deterministic reduced-material/performance fallbacks, and print resilience.
 
-Glaze UI 2.0.0 remains the immediately preceding accepted production baseline until this exact 2.1 candidate earns rendered preview, merge, deployment, and post-deployment acceptance. Historical 1.x/2.0 references may remain only where they are explicitly identified as historical or rollback context rather than current design guidance.
+Superseded 1.x and 2.0 implementation bundles are not retained as active Suite website assets. Historical version references may remain only where they are explicitly identified as history, migration, rollback, or evidence context.
 
 ## Cloudflare Pages
 
@@ -67,13 +66,13 @@ The build script publishes an explicit allowlist into `dist/`, including localiz
 
 ### Acceptance boundary
 
-A successful source build or green repository validator does not by itself establish an accepted public release. The exact candidate revision must pass the applicable Cloudflare branch-preview verification before merge, and the resulting `main` revision must be verified on `suite.goreecloud.com` after deployment. Source, built artifact, and deployed bytes must agree before the modernization is recorded as production-accepted.
+A successful source build or green repository validator does not by itself establish an accepted public release. The exact candidate revision must pass the applicable Cloudflare branch-preview verification before merge, and the resulting `main` revision must be verified on `suite.goreecloud.com` after deployment. Source, built artifact, and deployed bytes must agree before a new modernization revision is recorded as production-accepted.
 
 ## Product identity
 
 Application cards use reviewed canonical application identities where approved. Platform-specific derivatives may change size, mask, padding, rasterization, or adaptive layers while preserving the underlying approved identity.
 
-The current cross-repository branding authority is `GoreeCloud/goreecloud-branding-assets`; synchronized local assets remain necessary so the deployed Suite site has no runtime dependency on that private repository.
+The cross-repository branding authority is `GoreeCloud/goreecloud-branding-assets`; synchronized local assets remain necessary so the deployed Suite site has no runtime dependency on that private repository.
 
 ## Documentation and evidence boundaries
 
