@@ -2,7 +2,7 @@
 
 GoreeCloud Suite is the first-party application and service layer of GoreeCloud.
 
-This repository owns the dedicated public Suite website at **https://suite.goreecloud.com/**. The site is separate from the main GoreeCloud homepage so application, service, lifecycle, capability, and product-identity detail has one focused home instead of being duplicated across `goreecloud.com`.
+The dedicated public Suite website at **https://suite.goreecloud.com/** now has canonical source authority in `GoreeCloud/goreecloud-static-websites` under `sites/suite/`. This repository retains the pre-cutover website copy only as a transitional deployment source until Cloudflare Pages is switched to the central repository and exact production verification succeeds. New authoritative static-site changes belong in the central repository, not here.
 
 ## Current public baseline
 
@@ -39,7 +39,7 @@ Public claims for these systems remain bounded by actual implementation and appl
 
 ## Origin-local identity assets
 
-The Suite repository stores byte-identical local copies of the reviewed GoreeCloud logo and approved Suite application icons under `assets/`. The public site references those local files directly instead of loading product artwork from another runtime origin.
+The centrally governed Suite static-site package stores byte-identical local copies of the reviewed GoreeCloud logo and approved Suite application icons under its `assets/` subtree. The public site references those local files directly instead of loading product artwork from another runtime origin.
 
 The September 1, 2026 identity synchronization adds these approved canonical derivatives:
 
@@ -50,7 +50,7 @@ The September 1, 2026 identity synchronization adds these approved canonical der
 
 All four are sourced from immutable canonical branding revision `715a2d13e92474a96b107cc66b5f0c026d5911f4`.
 
-`python scripts/validate_site.py` verifies the expected Git blob identity of every reviewed localized logo and icon. This prevents silent artwork drift while keeping `suite.goreecloud.com` independent of another website at runtime. The validator also requires the four newly approved product cards to render their canonical SVGs and rejects regression to the earlier `FM`, `MP`, or `AS` pending letter marks.
+The central Suite package's validator verifies the expected Git blob identity of every reviewed localized logo and icon. This prevents silent artwork drift while keeping `suite.goreecloud.com` independent of another website at runtime. The validator also requires the four newly approved product cards to render their canonical SVGs and rejects regression to the earlier `FM`, `MP`, or `AS` pending letter marks.
 
 If a future product does not yet have approved canonical artwork, it must use an explicitly neutral treatment until the branding authority publishes an approved asset. A placeholder must never be described as an official logo or icon.
 
@@ -62,20 +62,22 @@ Superseded 1.x and 2.0 implementation bundles are not retained as active Suite w
 
 ## Cloudflare Pages
 
-Production configuration:
+**Transitional production configuration until central cutover:**
 
-- Repository: `GoreeCloud/goreecloud-suite`
+- Current deployment repository: `GoreeCloud/goreecloud-suite`
+- Canonical source repository: `GoreeCloud/goreecloud-static-websites`
+- Canonical source root: `sites/suite`
 - Production branch: `main`
-- Build command: `python scripts/build_public_site.py`
-- Build output directory: `dist`
-- Root directory: blank
+- Current legacy build command: `python scripts/build_public_site.py`
+- Current legacy build output directory: `dist`
+- Current legacy root directory: blank
 - Custom domain: `suite.goreecloud.com`
 
-The build script publishes an explicit allowlist into `dist/`, including localized identity assets, so repository documentation is not automatically exposed.
+Cloudflare Pages MUST be changed to the canonical central source/root before the legacy website copy can be retired. Until that external cutover and exact production verification occur, this repository's website files remain transitional deployment material and are not the editing authority.
 
 ### Acceptance boundary
 
-A successful source build or green repository validator does not by itself establish an accepted public release. The exact candidate revision must pass the applicable Cloudflare branch-preview verification before merge, and the resulting `main` revision must be verified on `suite.goreecloud.com` after deployment. Source, built artifact, and deployed bytes must agree before a new modernization revision is recorded as production-accepted.
+A successful source build or green repository validator does not by itself establish an accepted public release. The exact candidate revision must pass the applicable preview verification before merge, and the resulting accepted central revision must be verified on `suite.goreecloud.com` after deployment. Source, built artifact, and deployed bytes must agree before a new modernization revision is recorded as production-accepted.
 
 ## Product identity
 
